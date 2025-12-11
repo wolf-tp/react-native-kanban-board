@@ -31,6 +31,18 @@ export interface KanbanContextValue<T extends CardData = CardData> {
   dragState: DragState;
   isDragging: boolean;
 
+  // Overlay state for proper drag rendering (Overlay Pattern)
+  draggingOverlay: {
+    card: T | null;
+    position: { x: number; y: number };
+    size: { width: number; height: number };
+  };
+  updateDraggingOverlay: (
+    card: T | null,
+    position: { x: number; y: number },
+    size?: { width: number; height: number }
+  ) => void;
+
   // Drag actions
   startDrag: (
     cardId: string,
@@ -119,6 +131,30 @@ export function KanbanProvider<T extends CardData = CardData>({
   );
   const [collapsedColumns, setCollapsedColumns] = useState<Set<string>>(
     new Set(columns.filter((col) => col.collapsed).map((col) => col.id))
+  );
+  const [draggingOverlay, setDraggingOverlay] = useState<{
+    card: T | null;
+    position: { x: number; y: number };
+    size: { width: number; height: number };
+  }>({
+    card: null,
+    position: { x: 0, y: 0 },
+    size: { width: 0, height: 0 },
+  });
+
+  const updateDraggingOverlay = useCallback(
+    (
+      card: T | null,
+      position: { x: number; y: number },
+      size?: { width: number; height: number }
+    ) => {
+      setDraggingOverlay((prev) => ({
+        card,
+        position,
+        size: size || prev.size,
+      }));
+    },
+    []
   );
 
   const toggleColumnCollapse = useCallback((columnId: string) => {
@@ -263,6 +299,8 @@ export function KanbanProvider<T extends CardData = CardData>({
       isColumnCollapsed,
       dragState,
       isDragging: dragState.activeCardId !== null,
+      draggingOverlay,
+      updateDraggingOverlay,
       startDrag,
       updateDrag,
       endDrag,
@@ -289,6 +327,8 @@ export function KanbanProvider<T extends CardData = CardData>({
       toggleColumnCollapse,
       isColumnCollapsed,
       dragState,
+      draggingOverlay,
+      updateDraggingOverlay,
       startDrag,
       updateDrag,
       endDrag,

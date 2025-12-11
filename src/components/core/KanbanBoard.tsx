@@ -5,9 +5,10 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DEFAULT_BOARD_PADDING } from '../../constants';
-import { useTheme } from '../../hooks';
+import { useTheme, useKanban } from '../../hooks';
 import type { CardData, KanbanBoardProps } from '../../types';
 import { KanbanColumn } from './KanbanColumn';
+import { DraggingOverlay } from './DraggingOverlay';
 
 export function KanbanBoard({
   columns,
@@ -26,6 +27,7 @@ export function KanbanBoard({
   'cards' | 'onCardMove' | 'onCardReorder' | 'dragEnabled' | 'hapticFeedback'
 >) {
   const { theme } = useTheme();
+  const { draggingOverlay } = useKanban();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -60,6 +62,15 @@ export function KanbanBoard({
             />
           ))}
         </ScrollView>
+
+        {/* Dragging Overlay - Renders outside ScrollView for proper z-index */}
+        <DraggingOverlay
+          card={draggingOverlay.card}
+          position={draggingOverlay.position}
+          width={draggingOverlay.size.width}
+          height={draggingOverlay.size.height}
+          renderCard={renderCard}
+        />
       </View>
     </GestureHandlerRootView>
   );
