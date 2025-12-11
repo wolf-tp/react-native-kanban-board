@@ -3,6 +3,7 @@
  */
 
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DEFAULT_BOARD_PADDING } from '../../constants';
 import { useTheme } from '../../hooks';
 import type { CardData, KanbanBoardProps } from '../../types';
@@ -27,38 +28,40 @@ export function KanbanBoard({
   const { theme } = useTheme();
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: theme.colors.boardBackground },
-        style,
-      ]}
-    >
-      <ScrollView
-        horizontal
-        scrollEnabled={scrollEnabled}
-        showsHorizontalScrollIndicator={showsScrollIndicator}
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            padding: contentContainerPadding,
-            gap: columnGap,
-          },
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: theme.colors.boardBackground },
+          style,
         ]}
       >
-        {columns.map((column) => (
-          <KanbanColumn
-            key={column.id}
-            column={column}
-            style={columnStyle}
-            renderCard={renderCard}
-            renderColumnHeader={renderColumnHeader}
-            renderEmptyColumn={renderEmptyColumn}
-            renderColumnFooter={renderColumnFooter}
-          />
-        ))}
-      </ScrollView>
-    </View>
+        <ScrollView
+          horizontal
+          scrollEnabled={scrollEnabled}
+          showsHorizontalScrollIndicator={showsScrollIndicator}
+          contentContainerStyle={[
+            styles.scrollContent,
+            {
+              padding: contentContainerPadding,
+              gap: columnGap,
+            },
+          ]}
+        >
+          {columns.map((column) => (
+            <KanbanColumn
+              key={column.id}
+              column={column}
+              style={columnStyle}
+              renderCard={renderCard}
+              renderColumnHeader={renderColumnHeader}
+              renderEmptyColumn={renderEmptyColumn}
+              renderColumnFooter={renderColumnFooter}
+            />
+          ))}
+        </ScrollView>
+      </View>
+    </GestureHandlerRootView>
   );
 }
 

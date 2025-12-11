@@ -6,6 +6,8 @@ export { Kanban } from './KanbanProvider';
 export { KanbanBoard } from './KanbanBoard';
 export { KanbanColumn } from './KanbanColumn';
 export { KanbanCard } from './KanbanCard';
+export { DraggableCard } from './DraggableCard';
 export type { KanbanProps } from './KanbanProvider';
 export type { KanbanCardProps } from './KanbanCard';
 export type { KanbanColumnProps } from './KanbanColumn';
+export type { DraggableCardProps } from './DraggableCard';

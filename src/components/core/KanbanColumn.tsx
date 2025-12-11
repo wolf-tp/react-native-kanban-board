@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import type { CardData, ColumnConfig } from '../../types';
 import { useTheme, useKanban } from '../../hooks';
-import { KanbanCard } from './KanbanCard';
+import { DraggableCard } from './DraggableCard';
 import { getColumnCards } from '../../utils';
 
 export interface KanbanColumnProps {
@@ -157,14 +157,13 @@ function KanbanColumnComponent({
           )
         ) : (
           // Render cards
-          columnCards.map((card) => {
-            const isDragging = dragState.activeCardId === card.id;
-
+          columnCards.map((card, index) => {
             return (
-              <KanbanCard
+              <DraggableCard
                 key={card.id}
                 card={card}
-                isDragging={isDragging}
+                index={index}
+                columnId={column.id}
                 renderCard={renderCard}
                 onPress={() => onCardPress?.(card)}
                 onLongPress={() => onCardLongPress?.(card)}
