@@ -13,6 +13,7 @@ export { KanbanBoard } from './components/core/KanbanBoard';
 export { KanbanCard } from './components/core/KanbanCard';
 export { KanbanColumn } from './components/core/KanbanColumn';
 export { DraggableCard } from './components/core/DraggableCard';
+export { CardPlaceholder } from './components/core/CardPlaceholder';
 
 // Context providers
 export { KanbanProvider } from './context/KanbanContext';
@@ -119,3 +120,4 @@ export type {
 export type { KanbanContextValue } from './context/KanbanContext';
 export type { ThemeContextValue } from './context/ThemeContext';
 export type { DraggableCardProps } from './components/core/DraggableCard';
+export type { CardPlaceholderProps } from './components/core/CardPlaceholder';

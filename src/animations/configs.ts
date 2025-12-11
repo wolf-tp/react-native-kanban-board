@@ -81,6 +81,8 @@ export const PLACEHOLDER_ANIMATION = {
   HEIGHT_COLLAPSED: 0,
   OPACITY_HIDDEN: 0,
   OPACITY_VISIBLE: 0.5,
+  FADE_IN: 200, // ms
+  FADE_OUT: 150, // ms
 } as const;
 
 /**

@@ -16,6 +16,7 @@ import {
 import type { CardData, ColumnConfig } from '../../types';
 import { useTheme, useKanban } from '../../hooks';
 import { DraggableCard } from './DraggableCard';
+import { CardPlaceholder } from './CardPlaceholder';
 import { getColumnCards } from '../../utils';
 
 export interface KanbanColumnProps {
@@ -161,33 +162,53 @@ function KanbanColumnComponent({
         showsVerticalScrollIndicator={false}
       >
         {columnCards.length === 0 ? (
-          // Empty state
-          renderEmptyColumn ? (
-            renderEmptyColumn(column)
-          ) : (
-            <View style={styles.emptyState}>
-              <Text
-                style={[styles.emptyText, { color: theme.colors.textTertiary }]}
-              >
-                No cards yet
-              </Text>
-            </View>
-          )
+          // Empty state with placeholder
+          <>
+            {isDropTarget ? (
+              <CardPlaceholder visible={true} height={80} />
+            ) : renderEmptyColumn ? (
+              renderEmptyColumn(column)
+            ) : (
+              <View style={styles.emptyState}>
+                <Text
+                  style={[
+                    styles.emptyText,
+                    { color: theme.colors.textTertiary },
+                  ]}
+                >
+                  No cards yet
+                </Text>
+              </View>
+            )}
+          </>
         ) : (
-          // Render cards
-          columnCards.map((card, index) => {
-            return (
-              <DraggableCard
-                key={card.id}
-                card={card}
-                index={index}
-                columnId={column.id}
-                renderCard={renderCard}
-                onPress={() => onCardPress?.(card)}
-                onLongPress={() => onCardLongPress?.(card)}
-              />
-            );
-          })
+          // Render cards with placeholders
+          <>
+            {columnCards.map((card, index) => {
+              const showPlaceholderBefore =
+                isDropTarget && dragState.targetIndex === index;
+
+              return (
+                <React.Fragment key={card.id}>
+                  {showPlaceholderBefore && (
+                    <CardPlaceholder visible={true} height={80} />
+                  )}
+                  <DraggableCard
+                    card={card}
+                    index={index}
+                    columnId={column.id}
+                    renderCard={renderCard}
+                    onPress={() => onCardPress?.(card)}
+                    onLongPress={() => onCardLongPress?.(card)}
+                  />
+                </React.Fragment>
+              );
+            })}
+            {/* Placeholder at end if dropping after all cards */}
+            {isDropTarget && dragState.targetIndex === columnCards.length && (
+              <CardPlaceholder visible={true} height={80} />
+            )}
+          </>
         )}
       </ScrollView>
 
