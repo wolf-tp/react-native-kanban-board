@@ -23,17 +23,20 @@ yarn add react-native-kanban-board
 # Using npm
 npm install react-native-kanban-board
 
-# Install peer dependencies (optional for Phase 1)
+# Install peer dependencies
 yarn add react-native-reanimated react-native-gesture-handler
 ```
 
-### Setup Reanimated (Optional for Phase 1)
+### Complete Installation Guide
 
-Follow the [Reanimated installation guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/) to set up Reanimated in your project.
+For detailed installation instructions including Expo and bare React Native setup, see:
 
-### Setup Gesture Handler (Optional for Phase 1)
+📖 **[INSTALLATION.md](./INSTALLATION.md)** - Complete installation guide with troubleshooting
 
-Follow the [Gesture Handler installation guide](https://docs.swmansion.com/react-native-gesture-handler/docs/installation) to set up Gesture Handler in your project.
+Quick links:
+- [Expo Projects](./INSTALLATION.md#expo-projects)
+- [Bare React Native Projects](./INSTALLATION.md#bare-react-native-projects)
+- [Troubleshooting](./INSTALLATION.md#troubleshooting)
 
 ## Quick Start
 

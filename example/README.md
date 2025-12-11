@@ -12,6 +12,14 @@ This example demonstrates the basic usage of the `react-native-kanban-board` lib
 
 ## Running the Example
 
+### Prerequisites
+
+This example app requires:
+- **react-native-gesture-handler** (~2.20.2)
+- **react-native-reanimated** (~3.16.7)
+
+These are already included in `example/package.json`.
+
 ### Install Dependencies
 
 ```bash
@@ -22,23 +30,40 @@ yarn install
 npm install
 ```
 
+**Note:** If you're using a fresh checkout, make sure to install dependencies in both root and example folders.
+
 ### Run on iOS
 
 ```bash
+# From root directory
 yarn example ios
 
-# Or
-npm run example ios
+# Or directly from example folder
+cd example
+npx expo start --ios
 ```
 
 ### Run on Android
 
 ```bash
+# From root directory
 yarn example android
 
-# Or
-npm run example android
+# Or directly from example folder
+cd example
+npx expo start --android
 ```
+
+### Troubleshooting
+
+**If you see errors about Reanimated:**
+1. Clear cache: `npx expo start --clear`
+2. Restart Metro bundler
+3. Make sure `react-native-reanimated/plugin` is in babel.config.js
+
+**If you see errors about Gesture Handler:**
+1. Make sure package is installed: `yarn add react-native-gesture-handler`
+2. Restart the development server
 
 ## Code Structure
 
