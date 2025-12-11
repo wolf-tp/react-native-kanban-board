@@ -1,7 +1,7 @@
 {
   "name": "react-native-kanban-board",
   "version": "0.1.0",
-  "description": "Kanban Board for React Native",
+  "description": "Performant drag-and-drop Kanban board for React Native with Reanimated 3",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
@@ -42,6 +42,15 @@
   },
   "keywords": [
     "react-native",
+    "kanban",
+    "kanban-board",
+    "drag-and-drop",
+    "reanimated",
+    "gesture-handler",
+    "trello",
+    "board",
+    "cards",
+    "columns",
     "ios",
     "android"
   ],
@@ -83,8 +92,18 @@
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": ">=18.0.0",
+    "react-native": ">=0.70.0",
+    "react-native-reanimated": ">=3.0.0",
+    "react-native-gesture-handler": ">=2.9.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
+      "optional": true
+    }
   },
   "workspaces": [
     "example"
