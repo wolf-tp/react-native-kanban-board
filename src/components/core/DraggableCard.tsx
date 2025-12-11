@@ -1,6 +1,12 @@
 /**
  * Draggable Card - Full Overlay Pattern Implementation
- * Card becomes placeholder during drag, actual dragging in overlay
+ *
+ * Features:
+ * - Card becomes placeholder (opacity 0.3) during drag
+ * - Actual dragging happens in DraggingOverlay at screen level
+ * - Requires 1-second long press before drag activates
+ * - Uses measureInWindow for absolute screen positioning
+ * - No clipping by ScrollView (z-index 9999)
  */
 
 import React, { useCallback, useRef } from 'react';
@@ -57,6 +63,7 @@ export function DraggableCard({
   const originY = useSharedValue(0);
   const cardWidth = useSharedValue(0);
   const cardHeight = useSharedValue(0);
+  const isLongPressActivated = useSharedValue(false);
 
   const isDragging = dragState.activeCardId === card.id;
 
@@ -155,22 +162,38 @@ export function DraggableCard({
     [columnLayouts, cardLayouts, columns, cards, card, updateDrag]
   );
 
-  // End drag - hide overlay
+  // End drag - hide overlay and reset long press
   const onDragEnd = useCallback(() => {
     trigger('impactLight');
     endDrag();
     updateDraggingOverlay(null, { x: 0, y: 0 });
-  }, [trigger, endDrag, updateDraggingOverlay]);
+    isLongPressActivated.value = false;
+  }, [trigger, endDrag, updateDraggingOverlay, isLongPressActivated]);
 
-  // Gesture with proper position tracking
-  const panGesture = Gesture.Pan()
+  // Long Press gesture - 1 second hold required before drag
+  const longPressGesture = Gesture.LongPress()
+    .minDuration(1000)
     .enabled(dragEnabled)
     .onStart(() => {
       'worklet';
+      isLongPressActivated.value = true;
+      runOnJS(trigger)('impactMedium');
       runOnJS(onDragStart)();
     })
+    .onFinalize(() => {
+      'worklet';
+      if (!isDragging) {
+        isLongPressActivated.value = false;
+      }
+    });
+
+  // Pan gesture - only works after long press activates
+  const panGesture = Gesture.Pan()
+    .enabled(dragEnabled)
     .onUpdate((event) => {
       'worklet';
+      if (!isLongPressActivated.value) return;
+
       const newX = originX.value + event.translationX;
       const newY = originY.value + event.translationY;
 
@@ -185,16 +208,29 @@ export function DraggableCard({
     })
     .onEnd(() => {
       'worklet';
-      runOnJS(onDragEnd)();
+      if (isLongPressActivated.value) {
+        runOnJS(onDragEnd)();
+      }
     });
 
-  // Placeholder opacity when dragging
+  // Combine gestures - LongPress triggers, Pan moves
+  const composedGesture = Gesture.Simultaneous(longPressGesture, panGesture);
+
+  // Placeholder opacity when dragging + scale feedback during long press
   const placeholderStyle = useAnimatedStyle(() => ({
     opacity: isDragging ? withSpring(0.3, SMOOTH_SPRING) : 1,
+    transform: [
+      {
+        scale:
+          isLongPressActivated.value && !isDragging
+            ? withSpring(0.98, SMOOTH_SPRING)
+            : 1,
+      },
+    ],
   }));
 
   return (
-    <GestureDetector gesture={panGesture}>
+    <GestureDetector gesture={composedGesture}>
       <Animated.View
         ref={cardRef}
         onLayout={handleLayout}
