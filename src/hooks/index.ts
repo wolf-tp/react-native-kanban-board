@@ -5,3 +5,4 @@
 export * from './useTheme';
 export * from './useKanban';
 export * from './useHaptic';
+export * from './useAutoScroll';

@@ -22,6 +22,11 @@ export interface KanbanContextValue<T extends CardData = CardData> {
   cardLayouts: Map<string, ColumnLayout>;
   registerCardLayout: (cardId: string, layout: ColumnLayout) => void;
 
+  // Column state
+  collapsedColumns: Set<string>;
+  toggleColumnCollapse: (columnId: string) => void;
+  isColumnCollapsed: (columnId: string) => boolean;
+
   // Drag state
   dragState: DragState;
   isDragging: boolean;
@@ -111,6 +116,26 @@ export function KanbanProvider<T extends CardData = CardData>({
   );
   const [cardLayouts, setCardLayouts] = useState<Map<string, ColumnLayout>>(
     new Map()
+  );
+  const [collapsedColumns, setCollapsedColumns] = useState<Set<string>>(
+    new Set(columns.filter((col) => col.collapsed).map((col) => col.id))
+  );
+
+  const toggleColumnCollapse = useCallback((columnId: string) => {
+    setCollapsedColumns((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(columnId)) {
+        newSet.delete(columnId);
+      } else {
+        newSet.add(columnId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const isColumnCollapsed = useCallback(
+    (columnId: string) => collapsedColumns.has(columnId),
+    [collapsedColumns]
   );
 
   const startDrag = useCallback(
@@ -233,6 +258,9 @@ export function KanbanProvider<T extends CardData = CardData>({
       registerColumnLayout,
       cardLayouts,
       registerCardLayout,
+      collapsedColumns,
+      toggleColumnCollapse,
+      isColumnCollapsed,
       dragState,
       isDragging: dragState.activeCardId !== null,
       startDrag,
@@ -257,6 +285,9 @@ export function KanbanProvider<T extends CardData = CardData>({
       registerColumnLayout,
       cardLayouts,
       registerCardLayout,
+      collapsedColumns,
+      toggleColumnCollapse,
+      isColumnCollapsed,
       dragState,
       startDrag,
       updateDrag,

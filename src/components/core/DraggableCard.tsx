@@ -18,7 +18,7 @@ import { useKanban, useTheme, useHaptic } from '../../hooks';
 import { SMOOTH_SPRING, CARD_ANIMATION } from '../../animations';
 import { KanbanCard } from './KanbanCard';
 import { isPointInRect, calculateDropIndex } from '../../utils/collision';
-import { getColumnCards } from '../../utils/reorder';
+import { getColumnCards, canMoveToColumn } from '../../utils/reorder';
 
 export interface DraggableCardProps {
   card: CardData;
@@ -81,6 +81,12 @@ export function DraggableCard({
       for (const column of columns) {
         const layout = columnLayouts.get(column.id);
         if (layout && isPointInRect(position, layout)) {
+          // Check if card can be moved to this column (constraints)
+          if (!canMoveToColumn(card, column.id, columns, cards)) {
+            // Cannot drop here due to constraints
+            break;
+          }
+
           targetColumnId = column.id;
 
           // Get cards in this column (excluding the dragging card)
@@ -104,7 +110,7 @@ export function DraggableCard({
       // Update drag state with target info
       updateDrag(position, targetColumnId, targetIndex);
     },
-    [columnLayouts, cardLayouts, columns, cards, card.id, updateDrag]
+    [columnLayouts, cardLayouts, columns, cards, card, updateDrag]
   );
 
   // Reset position when drag ends

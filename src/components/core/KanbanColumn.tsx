@@ -50,7 +50,11 @@ function KanbanColumnComponent({
     registerColumnLayout,
     dragState,
     isDragging,
+    toggleColumnCollapse,
+    isColumnCollapsed,
   } = useKanban();
+
+  const collapsed = column.collapsible && isColumnCollapsed(column.id);
 
   // Get cards for this column
   const columnCards = useMemo(
@@ -146,71 +150,86 @@ function KanbanColumnComponent({
               {columnCards.length}
             </Text>
           </View>
+
+          {/* Collapse/Expand button */}
+          {column.collapsible && (
+            <Pressable
+              onPress={() => toggleColumnCollapse(column.id)}
+              style={styles.collapseButton}
+              hitSlop={8}
+            >
+              <Text style={{ color: theme.colors.textSecondary, fontSize: 18 }}>
+                {collapsed ? '▶' : '▼'}
+              </Text>
+            </Pressable>
+          )}
         </Pressable>
       )}
 
-      {/* Cards ScrollView */}
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            padding: theme.spacing.columnPadding,
-            gap: cardGap,
-          },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        {columnCards.length === 0 ? (
-          // Empty state with placeholder
-          <>
-            {isDropTarget ? (
-              <CardPlaceholder visible={true} height={80} />
-            ) : renderEmptyColumn ? (
-              renderEmptyColumn(column)
-            ) : (
-              <View style={styles.emptyState}>
-                <Text
-                  style={[
-                    styles.emptyText,
-                    { color: theme.colors.textTertiary },
-                  ]}
-                >
-                  No cards yet
-                </Text>
-              </View>
-            )}
-          </>
-        ) : (
-          // Render cards with placeholders
-          <>
-            {columnCards.map((card, index) => {
-              const showPlaceholderBefore =
-                isDropTarget && dragState.targetIndex === index;
+      {/* Cards ScrollView - Hidden when collapsed */}
+      {!collapsed && (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[
+            styles.scrollContent,
+            {
+              padding: theme.spacing.columnPadding,
+              gap: cardGap,
+            },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          {columnCards.length === 0 ? (
+            // Empty state with placeholder
+            <>
+              {isDropTarget ? (
+                <CardPlaceholder visible={true} height={80} />
+              ) : renderEmptyColumn ? (
+                renderEmptyColumn(column)
+              ) : (
+                <View style={styles.emptyState}>
+                  <Text
+                    style={[
+                      styles.emptyText,
+                      { color: theme.colors.textTertiary },
+                    ]}
+                  >
+                    No cards yet
+                  </Text>
+                </View>
+              )}
+            </>
+          ) : (
+            // Render cards with placeholders
+            <>
+              {columnCards.map((card, index) => {
+                const showPlaceholderBefore =
+                  isDropTarget && dragState.targetIndex === index;
 
-              return (
-                <React.Fragment key={card.id}>
-                  {showPlaceholderBefore && (
-                    <CardPlaceholder visible={true} height={80} />
-                  )}
-                  <DraggableCard
-                    card={card}
-                    index={index}
-                    columnId={column.id}
-                    renderCard={renderCard}
-                    onPress={() => onCardPress?.(card)}
-                    onLongPress={() => onCardLongPress?.(card)}
-                  />
-                </React.Fragment>
-              );
-            })}
-            {/* Placeholder at end if dropping after all cards */}
-            {isDropTarget && dragState.targetIndex === columnCards.length && (
-              <CardPlaceholder visible={true} height={80} />
-            )}
-          </>
-        )}
-      </ScrollView>
+                return (
+                  <React.Fragment key={card.id}>
+                    {showPlaceholderBefore && (
+                      <CardPlaceholder visible={true} height={80} />
+                    )}
+                    <DraggableCard
+                      card={card}
+                      index={index}
+                      columnId={column.id}
+                      renderCard={renderCard}
+                      onPress={() => onCardPress?.(card)}
+                      onLongPress={() => onCardLongPress?.(card)}
+                    />
+                  </React.Fragment>
+                );
+              })}
+              {/* Placeholder at end if dropping after all cards */}
+              {isDropTarget && dragState.targetIndex === columnCards.length && (
+                <CardPlaceholder visible={true} height={80} />
+              )}
+            </>
+          )}
+        </ScrollView>
+      )}
 
       {/* Column Footer */}
       {renderColumnFooter && (
@@ -246,6 +265,10 @@ const styles = StyleSheet.create({
   },
   countText: {
     // Dynamic styles from theme
+  },
+  collapseButton: {
+    padding: 4,
+    marginLeft: 4,
   },
   scrollView: {
     flex: 1,
