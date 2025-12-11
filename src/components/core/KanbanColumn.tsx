@@ -2,7 +2,7 @@
  * Kanban column component
  */
 
-import React, { memo, useMemo, useCallback } from 'react';
+import React, { memo, useMemo, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -55,6 +55,7 @@ function KanbanColumnComponent({
   } = useKanban();
 
   const collapsed = column.collapsible && isColumnCollapsed(column.id);
+  const columnRef = useRef<any>(null);
 
   // Get cards for this column
   const columnCards = useMemo(
@@ -66,19 +67,39 @@ function KanbanColumnComponent({
     onColumnPress?.(column);
   };
 
+  // Measure column position using measureInWindow for absolute screen coordinates
+  const measureAndUpdateLayout = useCallback(() => {
+    if (!columnRef.current) return;
+
+    // @ts-ignore - measureInWindow exists but not in types
+    columnRef.current.measureInWindow(
+      (x: number, y: number, width: number, height: number) => {
+        registerColumnLayout(column.id, { x, y, width, height });
+      }
+    );
+  }, [column.id, registerColumnLayout]);
+
   const handleLayout = useCallback(
-    (event: LayoutChangeEvent) => {
-      const { x, y, width, height } = event.nativeEvent.layout;
-      registerColumnLayout(column.id, { x, y, width, height });
+    (_event: LayoutChangeEvent) => {
+      // Use measureInWindow for absolute coordinates instead of relative layout
+      measureAndUpdateLayout();
     },
-    [column.id, registerColumnLayout]
+    [measureAndUpdateLayout]
   );
+
+  // Update column position when dragging starts (to account for scroll)
+  useEffect(() => {
+    if (isDragging) {
+      measureAndUpdateLayout();
+    }
+  }, [isDragging, measureAndUpdateLayout]);
 
   // Check if this column is the drop target
   const isDropTarget = isDragging && dragState.targetColumnId === column.id;
 
   return (
     <View
+      ref={columnRef}
       onLayout={handleLayout}
       style={[
         styles.container,
