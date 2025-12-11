@@ -36,7 +36,7 @@ export function useHaptic(enabled: boolean = true) {
           // When users install react-native-haptic-feedback:
           // const ReactNativeHapticFeedback = require('react-native-haptic-feedback');
           // ReactNativeHapticFeedback.trigger(type);
-        } catch (error) {
+        } catch {
           // Silently fail if haptic feedback is not available
         }
       } else if (Platform.OS === 'android') {
@@ -45,7 +45,7 @@ export function useHaptic(enabled: boolean = true) {
           // const { Vibration } = require('react-native');
           // const duration = type.includes('Heavy') ? 50 : type.includes('Light') ? 10 : 25;
           // Vibration.vibrate(duration);
-        } catch (error) {
+        } catch {
           // Silently fail
         }
       }

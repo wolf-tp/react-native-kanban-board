@@ -103,8 +103,8 @@ function KanbanCardComponent({
                 card.priority === 'high'
                   ? theme.colors.priorityHigh
                   : card.priority === 'medium'
-                    ? theme.colors.priorityMedium
-                    : theme.colors.priorityLow,
+                  ? theme.colors.priorityMedium
+                  : theme.colors.priorityLow,
               borderRadius: theme.borderRadius.badge,
               marginTop: 8,
             },

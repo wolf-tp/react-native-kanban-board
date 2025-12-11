@@ -11,7 +11,7 @@ module.exports = function (api) {
     {
       presets: ['babel-preset-expo'],
       plugins: [
-        'react-native-reanimated/plugin', // Must be last
+        'react-native-worklets/plugin', // Must be last
       ],
     },
     { root, pkg }

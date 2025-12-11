@@ -2,17 +2,21 @@
  * React Native Kanban Board - Example App
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-  View,
-  StyleSheet,
-  StatusBar,
   SafeAreaView,
+  StatusBar,
+  StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from 'react-native';
-import { Kanban, type CardData, type ThemeMode } from 'react-native-kanban-board';
+import {
+  Kanban,
+  type CardData,
+  type ThemeMode,
+} from 'react-native-kanban-board';
 import { columns, initialCards } from './data';
 
 export default function App() {
@@ -27,7 +31,7 @@ export default function App() {
    */
   const handleCardMove = (
     cardId: string,
-    fromColumn: string,
+    _fromColumn: string,
     toColumn: string,
     newIndex: number
   ) => {
@@ -67,7 +71,7 @@ export default function App() {
 
       // Reorder within column
       const [movedCard] = columnCards.splice(fromIndex, 1);
-      columnCards.splice(toIndex, 0, movedCard);
+      columnCards.splice(toIndex, 0, movedCard as CardData);
 
       return [...otherCards, ...columnCards];
     });

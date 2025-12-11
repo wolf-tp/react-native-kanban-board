@@ -47,7 +47,8 @@ export const initialCards: CardData[] = [
     id: '2',
     columnId: 'new',
     title: 'Setup CI/CD pipeline',
-    description: 'Configure GitHub Actions for automated testing and deployment',
+    description:
+      'Configure GitHub Actions for automated testing and deployment',
     priority: 'medium',
     labels: ['devops'],
   },

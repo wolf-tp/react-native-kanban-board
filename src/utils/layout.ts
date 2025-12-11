@@ -14,9 +14,7 @@ export function calculateBoardWidth(
   padding: number
 ): number {
   return (
-    columnCount * columnWidth +
-    (columnCount - 1) * columnGap +
-    padding * 2
+    columnCount * columnWidth + (columnCount - 1) * columnGap + padding * 2
   );
 }
 
@@ -63,7 +61,10 @@ export function calculateColumnHeight(
 ): number {
   if (cardHeights.length === 0) return columnPadding * 2;
 
-  const totalCardHeight = cardHeights.reduce((sum, height) => sum + (height || 0), 0);
+  const totalCardHeight = cardHeights.reduce(
+    (sum, height) => sum + (height || 0),
+    0
+  );
   const totalGapHeight = (cardHeights.length - 1) * cardGap;
 
   return totalCardHeight + totalGapHeight + columnPadding * 2;

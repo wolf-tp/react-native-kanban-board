@@ -2,14 +2,13 @@
  * Kanban board component
  */
 
-import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import type { CardData, KanbanBoardProps } from '../../types';
-import { useTheme } from '../../hooks';
-import { KanbanColumn } from './KanbanColumn';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { DEFAULT_BOARD_PADDING } from '../../constants';
+import { useTheme } from '../../hooks';
+import type { CardData, KanbanBoardProps } from '../../types';
+import { KanbanColumn } from './KanbanColumn';
 
-export function KanbanBoard<T extends CardData = CardData>({
+export function KanbanBoard({
   columns,
   style,
   columnStyle,
@@ -22,7 +21,7 @@ export function KanbanBoard<T extends CardData = CardData>({
   showsScrollIndicator = false,
   contentContainerPadding = DEFAULT_BOARD_PADDING,
 }: Omit<
-  KanbanBoardProps<T>,
+  KanbanBoardProps<CardData>,
   'cards' | 'onCardMove' | 'onCardReorder' | 'dragEnabled' | 'hapticFeedback'
 >) {
   const { theme } = useTheme();

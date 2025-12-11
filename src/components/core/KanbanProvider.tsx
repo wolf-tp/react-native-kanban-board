@@ -4,9 +4,14 @@
  */
 
 import React from 'react';
-import type { CardData, KanbanBoardProps, KanbanTheme, ThemeMode } from '../../types';
-import { ThemeProvider } from '../../context/ThemeContext';
 import { KanbanProvider as KanbanContextProvider } from '../../context/KanbanContext';
+import { ThemeProvider } from '../../context/ThemeContext';
+import type {
+  CardData,
+  KanbanBoardProps,
+  KanbanTheme,
+  ThemeMode,
+} from '../../types';
 import { KanbanBoard } from './KanbanBoard';
 
 export interface KanbanProps<T extends CardData = CardData>
@@ -51,7 +56,7 @@ export interface KanbanProps<T extends CardData = CardData>
  * }
  * ```
  */
-export function Kanban<T extends CardData = CardData>({
+export function Kanban({
   // Theme props
   theme,
   themeMode = 'light',
@@ -87,7 +92,7 @@ export function Kanban<T extends CardData = CardData>({
 
   // Children
   children,
-}: KanbanProps<T>) {
+}: KanbanProps<CardData>) {
   return (
     <ThemeProvider theme={theme} mode={themeMode}>
       <KanbanContextProvider

@@ -3,7 +3,10 @@
  */
 
 import { useContext } from 'react';
-import { KanbanContext, type KanbanContextValue } from '../context/KanbanContext';
+import {
+  KanbanContext,
+  type KanbanContextValue,
+} from '../context/KanbanContext';
 import type { CardData } from '../types';
 
 /**
@@ -16,12 +19,14 @@ import type { CardData } from '../types';
  * const { cards, columns, isDragging } = useKanban();
  * ```
  */
-export function useKanban<T extends CardData = CardData>(): KanbanContextValue<T> {
+export function useKanban<
+  T extends CardData = CardData
+>(): KanbanContextValue<T> {
   const context = useContext(KanbanContext);
 
   if (!context) {
     throw new Error('useKanban must be used within KanbanProvider');
   }
 
-  return context as KanbanContextValue<T>;
+  return context as any as KanbanContextValue<T>;
 }

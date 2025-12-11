@@ -60,7 +60,11 @@ export interface KanbanBoardProps<T extends CardData = CardData> {
   /**
    * Callback when card is reordered within same column
    */
-  onCardReorder?: (columnId: string, fromIndex: number, toIndex: number) => void;
+  onCardReorder?: (
+    columnId: string,
+    fromIndex: number,
+    toIndex: number
+  ) => void;
 
   /**
    * Callback when card is pressed

@@ -149,10 +149,7 @@ function KanbanColumnComponent({
           ) : (
             <View style={styles.emptyState}>
               <Text
-                style={[
-                  styles.emptyText,
-                  { color: theme.colors.textTertiary },
-                ]}
+                style={[styles.emptyText, { color: theme.colors.textTertiary }]}
               >
                 No cards yet
               </Text>

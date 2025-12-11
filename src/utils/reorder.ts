@@ -19,7 +19,7 @@ export function reorderCards<T extends CardData>(
 
   // Reorder within column
   const [movedCard] = columnCards.splice(fromIndex, 1);
-  columnCards.splice(toIndex, 0, movedCard);
+  columnCards.splice(toIndex, 0, movedCard as T);
 
   // Combine and return
   return [...otherCards, ...columnCards];

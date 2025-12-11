@@ -2,7 +2,10 @@
  * Animation configurations
  */
 
-import type { WithSpringConfig, WithTimingConfig } from 'react-native-reanimated';
+import type {
+  WithSpringConfig,
+  WithTimingConfig,
+} from 'react-native-reanimated';
 
 /**
  * Smooth spring animation config
@@ -13,8 +16,6 @@ export const SMOOTH_SPRING: WithSpringConfig = {
   stiffness: 300,
   mass: 0.8,
   overshootClamping: false,
-  restDisplacementThreshold: 0.01,
-  restSpeedThreshold: 0.01,
 };
 
 /**
@@ -26,8 +27,6 @@ export const QUICK_SPRING: WithSpringConfig = {
   stiffness: 400,
   mass: 0.5,
   overshootClamping: false,
-  restDisplacementThreshold: 0.01,
-  restSpeedThreshold: 0.01,
 };
 
 /**
@@ -39,8 +38,6 @@ export const SLOW_SPRING: WithSpringConfig = {
   stiffness: 200,
   mass: 1,
   overshootClamping: false,
-  restDisplacementThreshold: 0.01,
-  restSpeedThreshold: 0.01,
 };
 
 /**

@@ -2,12 +2,7 @@
  * Kanban board context
  */
 
-import React, {
-  createContext,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import React, { createContext, useCallback, useMemo, useState } from 'react';
 import type {
   CardData,
   ColumnConfig,
@@ -25,14 +20,26 @@ export interface KanbanContextValue<T extends CardData = CardData> {
   isDragging: boolean;
 
   // Drag actions
-  startDrag: (cardId: string, columnId: string, position: { x: number; y: number }) => void;
-  updateDrag: (position: { x: number; y: number }, targetColumnId?: string, targetIndex?: number) => void;
+  startDrag: (
+    cardId: string,
+    columnId: string,
+    position: { x: number; y: number }
+  ) => void;
+  updateDrag: (
+    position: { x: number; y: number },
+    targetColumnId?: string,
+    targetIndex?: number
+  ) => void;
   endDrag: (targetColumnId?: string, targetIndex?: number) => void;
   cancelDrag: () => void;
 
   // Card actions
   moveCardAction: (cardId: string, toColumnId: string, toIndex: number) => void;
-  reorderCardAction: (columnId: string, fromIndex: number, toIndex: number) => void;
+  reorderCardAction: (
+    columnId: string,
+    fromIndex: number,
+    toIndex: number
+  ) => void;
 
   // Callbacks
   onCardPress?: (card: T) => void;
@@ -143,7 +150,10 @@ export function KanbanProvider<T extends CardData = CardData>({
         if (fromIndex !== finalTargetIndex) {
           onCardReorder?.(activeColumnId, fromIndex, finalTargetIndex);
         }
-      } else if (finalTargetColumnId && finalTargetColumnId !== activeColumnId) {
+      } else if (
+        finalTargetColumnId &&
+        finalTargetColumnId !== activeColumnId
+      ) {
         // Move to different column
         onCardMove?.(
           activeCardId,
@@ -223,7 +233,7 @@ export function KanbanProvider<T extends CardData = CardData>({
   );
 
   return (
-    <KanbanContext.Provider value={value as KanbanContextValue}>
+    <KanbanContext.Provider value={value as unknown as KanbanContextValue}>
       {children}
     </KanbanContext.Provider>
   );

@@ -10,120 +10,110 @@ export { Kanban } from './components/core/KanbanProvider';
 
 // Core components
 export { KanbanBoard } from './components/core/KanbanBoard';
-export { KanbanColumn } from './components/core/KanbanColumn';
 export { KanbanCard } from './components/core/KanbanCard';
+export { KanbanColumn } from './components/core/KanbanColumn';
 
 // Context providers
-export { ThemeProvider } from './context/ThemeContext';
 export { KanbanProvider } from './context/KanbanContext';
+export { ThemeProvider } from './context/ThemeContext';
 
 // Hooks
-export { useTheme } from './hooks/useTheme';
-export { useKanban } from './hooks/useKanban';
 export { useHaptic } from './hooks/useHaptic';
+export { useKanban } from './hooks/useKanban';
+export { useTheme } from './hooks/useTheme';
 
 // Theme
-export { lightTheme, darkTheme, createTheme, getDefaultTheme } from './theme';
+export { createTheme, darkTheme, getDefaultTheme, lightTheme } from './theme';
 
 // Utils
 export {
+  canMoveToColumn,
+  getCardIndexInColumn,
+  getColumnCards,
   moveCard,
   reorderCards,
-  getColumnCards,
-  getCardIndexInColumn,
-  canMoveToColumn,
 } from './utils/reorder';
 
 export {
-  isPointInRect,
-  doRectsOverlap,
-  getOverlapArea,
-  getDistance,
-  getRectCenter,
   calculateDropIndex,
+  doRectsOverlap,
+  getDistance,
+  getOverlapArea,
+  getRectCenter,
+  isPointInRect,
 } from './utils/collision';
 
 export {
   calculateBoardWidth,
-  calculateColumnX,
   calculateCardY,
   calculateColumnHeight,
+  calculateColumnX,
   groupCardsByColumn,
   sortCardsByPosition,
 } from './utils/layout';
 
 // Constants
 export {
-  DEFAULT_COLUMNS,
-  DEFAULT_COLUMN_WIDTH,
-  DEFAULT_COLUMN_GAP,
-  DEFAULT_CARD_GAP,
-  DEFAULT_BOARD_PADDING,
-  MIN_DRAG_DISTANCE,
-  AUTO_SCROLL_THRESHOLD,
   AUTO_SCROLL_SPEED,
-  Z_INDEX,
+  AUTO_SCROLL_THRESHOLD,
   CARD_SCALE,
+  DEFAULT_BOARD_PADDING,
+  DEFAULT_CARD_GAP,
+  DEFAULT_COLUMN_GAP,
+  DEFAULT_COLUMN_WIDTH,
+  DEFAULT_COLUMNS,
   HAPTIC_FEEDBACK,
+  MIN_DRAG_DISTANCE,
+  Z_INDEX,
 } from './constants';
 
 // Animation configs
 export {
-  SMOOTH_SPRING,
-  QUICK_SPRING,
-  SLOW_SPRING,
-  SMOOTH_TIMING,
-  QUICK_TIMING,
-  FADE_TIMING,
   CARD_ANIMATION,
+  FADE_TIMING,
   PLACEHOLDER_ANIMATION,
+  QUICK_SPRING,
+  QUICK_TIMING,
   SCROLL_ANIMATION,
+  SLOW_SPRING,
+  SMOOTH_SPRING,
+  SMOOTH_TIMING,
 } from './animations/configs';
 
 export {
-  animateCardPickup,
   animateCardDrop,
+  animateCardPickup,
+  animateCardsShift,
   animateCardToPosition,
   animatePlaceholderAppear,
   animatePlaceholderDisappear,
-  animateCardsShift,
 } from './animations/cardAnimations';
 
 // Types
 export type {
-  // Board
-  KanbanBoardProps,
-  DragState,
-
   // Card
   CardData,
-  CardPosition,
   CardLayout,
-
+  // Events
+  CardMoveEvent,
+  CardPosition,
+  CardPressEvent,
+  CardReorderEvent,
   // Column
   ColumnConfig,
   ColumnLayout,
-
-  // Events
-  CardMoveEvent,
-  CardReorderEvent,
-  CardPressEvent,
   ColumnPressEvent,
-  DragStartEvent,
+  DeepPartial,
   DragEndEvent,
-
+  DragStartEvent,
+  DragState,
+  // Board
+  KanbanBoardProps,
   // Theme
   KanbanTheme,
   ThemeMode,
   ThemeOverride,
-  DeepPartial,
-
-  // Component props
-  KanbanProps,
-  KanbanCardProps,
-  KanbanColumnProps,
 } from './types';
 
-export type { ThemeContextValue } from './context/ThemeContext';
 export type { KanbanContextValue } from './context/KanbanContext';
-
+export type { ThemeContextValue } from './context/ThemeContext';
