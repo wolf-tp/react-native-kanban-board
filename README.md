@@ -4,6 +4,13 @@ A performant, customizable drag-and-drop Kanban board component for React Native
 
 ## Features
 
+- 🎯 **Drag & Drop** - Full drag and drop support with gesture handling
+  - Smooth pickup and drop animations with scale and shadow effects
+  - Real-time drop zone detection with visual feedback
+  - Accurate drop position calculation based on Y coordinate
+  - Animated placeholders showing exactly where cards will land
+  - Move cards between columns or reorder within columns
+  - Haptic feedback on drag interactions (iOS/Android)
 - ✨ **Smooth Animations** - Powered by Reanimated 3 with customizable spring configs
 - 🎨 **Fully Customizable** - Bring your own UI components or use the defaults
 - 🌗 **Dark/Light Theme** - Built-in theming system with dark and light modes
