@@ -23,6 +23,7 @@ export { ThemeProvider } from './context/ThemeContext';
 export { useHaptic } from './hooks/useHaptic';
 export { useKanban } from './hooks/useKanban';
 export { useTheme } from './hooks/useTheme';
+export { useAutoScroll } from './hooks/useAutoScroll';
 
 // Theme
 export { createTheme, darkTheme, getDefaultTheme, lightTheme } from './theme';
