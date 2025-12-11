@@ -22,6 +22,10 @@ export interface KanbanContextValue<T extends CardData = CardData> {
   cardLayouts: Map<string, ColumnLayout>;
   registerCardLayout: (cardId: string, layout: ColumnLayout) => void;
 
+  // Scroll offset tracking for accurate collision detection
+  scrollOffset: { x: number; y: number };
+  updateScrollOffset: (offset: { x: number; y: number }) => void;
+
   // Column state
   collapsedColumns: Set<string>;
   toggleColumnCollapse: (columnId: string) => void;
@@ -141,6 +145,15 @@ export function KanbanProvider<T extends CardData = CardData>({
     position: { x: 0, y: 0 },
     size: { width: 0, height: 0 },
   });
+
+  const [scrollOffset, setScrollOffset] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+
+  const updateScrollOffset = useCallback((offset: { x: number; y: number }) => {
+    setScrollOffset(offset);
+  }, []);
 
   const updateDraggingOverlay = useCallback(
     (
@@ -294,6 +307,8 @@ export function KanbanProvider<T extends CardData = CardData>({
       registerColumnLayout,
       cardLayouts,
       registerCardLayout,
+      scrollOffset,
+      updateScrollOffset,
       collapsedColumns,
       toggleColumnCollapse,
       isColumnCollapsed,
@@ -323,6 +338,8 @@ export function KanbanProvider<T extends CardData = CardData>({
       registerColumnLayout,
       cardLayouts,
       registerCardLayout,
+      scrollOffset,
+      updateScrollOffset,
       collapsedColumns,
       toggleColumnCollapse,
       isColumnCollapsed,

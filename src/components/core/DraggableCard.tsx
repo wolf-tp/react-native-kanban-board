@@ -53,6 +53,7 @@ export function DraggableCard({
     cardLayouts,
     registerCardLayout,
     updateDraggingOverlay,
+    scrollOffset,
     columns,
     cards,
   } = useKanban();
@@ -137,29 +138,39 @@ export function DraggableCard({
 
       for (const column of columns) {
         const layout = columnLayouts.get(column.id);
-        if (layout && isPointInRect(position, layout)) {
-          if (!canMoveToColumn(card, column.id, columns, cards)) {
+        if (layout) {
+          // Adjust column position by scroll offset for accurate collision detection
+          // When scrolled right (scrollOffset.x > 0), columns appear further left on screen
+          const adjustedLayout = {
+            ...layout,
+            x: layout.x - scrollOffset.x,
+            y: layout.y - scrollOffset.y,
+          };
+
+          if (isPointInRect(position, adjustedLayout)) {
+            if (!canMoveToColumn(card, column.id, columns, cards)) {
+              break;
+            }
+
+            targetColumnId = column.id;
+            const columnCards = getColumnCards(cards, column.id).filter(
+              (c) => c.id !== card.id
+            );
+
+            const cardLayoutsArray = columnCards
+              .map((c) => cardLayouts.get(c.id))
+              .filter((l): l is NonNullable<typeof l> => l !== undefined)
+              .map((l) => ({ y: l.y, height: l.height }));
+
+            targetIndex = calculateDropIndex(position.y, cardLayoutsArray);
             break;
           }
-
-          targetColumnId = column.id;
-          const columnCards = getColumnCards(cards, column.id).filter(
-            (c) => c.id !== card.id
-          );
-
-          const cardLayoutsArray = columnCards
-            .map((c) => cardLayouts.get(c.id))
-            .filter((l): l is NonNullable<typeof l> => l !== undefined)
-            .map((l) => ({ y: l.y, height: l.height }));
-
-          targetIndex = calculateDropIndex(position.y, cardLayoutsArray);
-          break;
         }
       }
 
       updateDrag(position, targetColumnId, targetIndex);
     },
-    [columnLayouts, cardLayouts, columns, cards, card, updateDrag]
+    [columnLayouts, cardLayouts, columns, cards, card, updateDrag, scrollOffset]
   );
 
   // End drag - hide overlay and reset long press

@@ -9,6 +9,7 @@ import { useTheme, useKanban } from '../../hooks';
 import type { CardData, KanbanBoardProps } from '../../types';
 import { KanbanColumn } from './KanbanColumn';
 import { DraggingOverlay } from './DraggingOverlay';
+import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
 export function KanbanBoard({
   columns,
@@ -27,7 +28,12 @@ export function KanbanBoard({
   'cards' | 'onCardMove' | 'onCardReorder' | 'dragEnabled' | 'hapticFeedback'
 >) {
   const { theme } = useTheme();
-  const { draggingOverlay } = useKanban();
+  const { draggingOverlay, updateScrollOffset } = useKanban();
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { contentOffset } = event.nativeEvent;
+    updateScrollOffset({ x: contentOffset.x, y: contentOffset.y });
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -42,6 +48,8 @@ export function KanbanBoard({
           horizontal
           scrollEnabled={scrollEnabled}
           showsHorizontalScrollIndicator={showsScrollIndicator}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
           contentContainerStyle={[
             styles.scrollContent,
             {
