@@ -2,7 +2,13 @@
  * Kanban board context
  */
 
-import React, { createContext, useCallback, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useMemo,
+  useState,
+  useRef,
+} from 'react';
 import type {
   CardData,
   ColumnConfig,
@@ -22,9 +28,8 @@ export interface KanbanContextValue<T extends CardData = CardData> {
   cardLayouts: Map<string, ColumnLayout>;
   registerCardLayout: (cardId: string, layout: ColumnLayout) => void;
 
-  // Scroll offset tracking for accurate collision detection
-  scrollOffset: { x: number; y: number };
-  updateScrollOffset: (offset: { x: number; y: number }) => void;
+  // Scroll offset ref for performance (no rerenders)
+  scrollOffsetRef: React.MutableRefObject<{ x: number; y: number }>;
 
   // Column state
   collapsedColumns: Set<string>;
@@ -146,14 +151,8 @@ export function KanbanProvider<T extends CardData = CardData>({
     size: { width: 0, height: 0 },
   });
 
-  const [scrollOffset, setScrollOffset] = useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
-
-  const updateScrollOffset = useCallback((offset: { x: number; y: number }) => {
-    setScrollOffset(offset);
-  }, []);
+  // Use ref for scroll offset - no rerenders on scroll for better performance
+  const scrollOffsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const updateDraggingOverlay = useCallback(
     (
@@ -307,8 +306,7 @@ export function KanbanProvider<T extends CardData = CardData>({
       registerColumnLayout,
       cardLayouts,
       registerCardLayout,
-      scrollOffset,
-      updateScrollOffset,
+      scrollOffsetRef,
       collapsedColumns,
       toggleColumnCollapse,
       isColumnCollapsed,
@@ -338,8 +336,7 @@ export function KanbanProvider<T extends CardData = CardData>({
       registerColumnLayout,
       cardLayouts,
       registerCardLayout,
-      scrollOffset,
-      updateScrollOffset,
+      scrollOffsetRef,
       collapsedColumns,
       toggleColumnCollapse,
       isColumnCollapsed,

@@ -28,11 +28,12 @@ export function KanbanBoard({
   'cards' | 'onCardMove' | 'onCardReorder' | 'dragEnabled' | 'hapticFeedback'
 >) {
   const { theme } = useTheme();
-  const { draggingOverlay, updateScrollOffset } = useKanban();
+  const { draggingOverlay, scrollOffsetRef } = useKanban();
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset } = event.nativeEvent;
-    updateScrollOffset({ x: contentOffset.x, y: contentOffset.y });
+    // Direct ref mutation - no rerenders for better performance
+    scrollOffsetRef.current = { x: contentOffset.x, y: contentOffset.y };
   };
 
   return (
