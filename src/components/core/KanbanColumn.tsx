@@ -2,7 +2,7 @@
  * Kanban column component
  */
 
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Pressable,
   type StyleProp,
   type ViewStyle,
+  type LayoutChangeEvent,
 } from 'react-native';
 import type { CardData, ColumnConfig } from '../../types';
 import { useTheme, useKanban } from '../../hooks';
@@ -45,7 +46,9 @@ function KanbanColumnComponent({
     onCardPress,
     onCardLongPress,
     onColumnPress,
+    registerColumnLayout,
     dragState,
+    isDragging,
   } = useKanban();
 
   // Get cards for this column
@@ -58,14 +61,29 @@ function KanbanColumnComponent({
     onColumnPress?.(column);
   };
 
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { x, y, width, height } = event.nativeEvent.layout;
+      registerColumnLayout(column.id, { x, y, width, height });
+    },
+    [column.id, registerColumnLayout]
+  );
+
+  // Check if this column is the drop target
+  const isDropTarget = isDragging && dragState.targetColumnId === column.id;
+
   return (
     <View
+      onLayout={handleLayout}
       style={[
         styles.container,
         {
           width: columnWidth,
           backgroundColor: theme.colors.columnBackground,
-          borderColor: theme.colors.columnBorder,
+          borderColor: isDropTarget
+            ? column.color || theme.colors.dropZoneActive
+            : theme.colors.columnBorder,
+          borderWidth: isDropTarget ? 2 : 1,
           borderRadius: theme.borderRadius.column,
           ...theme.shadows.column,
         },
@@ -183,7 +201,6 @@ function KanbanColumnComponent({
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 1,
     overflow: 'hidden',
   },
   header: {

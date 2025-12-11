@@ -4,7 +4,7 @@
  */
 
 import React, { useCallback } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, type LayoutChangeEvent } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -17,6 +17,8 @@ import type { CardData } from '../../types';
 import { useKanban, useTheme, useHaptic } from '../../hooks';
 import { SMOOTH_SPRING, CARD_ANIMATION } from '../../animations';
 import { KanbanCard } from './KanbanCard';
+import { isPointInRect, calculateDropIndex } from '../../utils/collision';
+import { getColumnCards } from '../../utils/reorder';
 
 export interface DraggableCardProps {
   card: CardData;
@@ -29,7 +31,7 @@ export interface DraggableCardProps {
 
 export function DraggableCard({
   card,
-  index,
+  index: _index,
   columnId,
   renderCard,
   onPress,
@@ -43,6 +45,11 @@ export function DraggableCard({
     updateDrag,
     endDrag,
     dragState,
+    columnLayouts,
+    cardLayouts,
+    registerCardLayout,
+    columns,
+    cards,
   } = useKanban();
   const trigger = useHaptic(hapticFeedback);
 
@@ -50,21 +57,64 @@ export function DraggableCard({
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
-  const shadowOpacity = useSharedValue(
-    theme.shadows.card.shadowOpacity
-  );
+  const shadowOpacity = useSharedValue(theme.shadows.card.shadowOpacity);
 
   const isDragging = dragState.activeCardId === card.id;
+
+  // Handle card layout
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { x, y, width, height } = event.nativeEvent.layout;
+      registerCardLayout(card.id, { x, y, width, height });
+    },
+    [card.id, registerCardLayout]
+  );
+
+  // Detect target column and index based on drag position
+  const detectDropTarget = useCallback(
+    (position: { x: number; y: number }) => {
+      // Find which column the position is over
+      let targetColumnId: string | undefined;
+      let targetIndex = 0;
+
+      // Check each column
+      for (const column of columns) {
+        const layout = columnLayouts.get(column.id);
+        if (layout && isPointInRect(position, layout)) {
+          targetColumnId = column.id;
+
+          // Get cards in this column (excluding the dragging card)
+          const columnCards = getColumnCards(cards, column.id).filter(
+            (c) => c.id !== card.id
+          );
+
+          // Get layouts for cards in this column
+          const cardLayoutsArray = columnCards
+            .map((c) => cardLayouts.get(c.id))
+            .filter((l): l is NonNullable<typeof l> => l !== undefined)
+            .map((l) => ({ y: l.y, height: l.height }));
+
+          // Calculate drop index based on Y position
+          targetIndex = calculateDropIndex(position.y, cardLayoutsArray);
+
+          break;
+        }
+      }
+
+      // Update drag state with target info
+      updateDrag(position, targetColumnId, targetIndex);
+    },
+    [columnLayouts, cardLayouts, columns, cards, card.id, updateDrag]
+  );
 
   // Reset position when drag ends
   const resetPosition = useCallback(() => {
     translateX.value = withSpring(0, SMOOTH_SPRING);
     translateY.value = withSpring(0, SMOOTH_SPRING);
     scale.value = withSpring(1, SMOOTH_SPRING);
-    shadowOpacity.value = withTiming(
-      theme.shadows.card.shadowOpacity,
-      { duration: 200 }
-    );
+    shadowOpacity.value = withTiming(theme.shadows.card.shadowOpacity, {
+      duration: 200,
+    });
   }, [translateX, translateY, scale, shadowOpacity, theme]);
 
   // Gesture handling
@@ -74,10 +124,9 @@ export function DraggableCard({
       'worklet';
       // Scale up and increase shadow
       scale.value = withSpring(CARD_ANIMATION.PICKUP_SCALE, SMOOTH_SPRING);
-      shadowOpacity.value = withTiming(
-        CARD_ANIMATION.SHADOW_OPACITY_DRAGGING,
-        { duration: 200 }
-      );
+      shadowOpacity.value = withTiming(CARD_ANIMATION.SHADOW_OPACITY_DRAGGING, {
+        duration: 200,
+      });
 
       // Trigger haptic feedback
       runOnJS(trigger)('impactMedium');
@@ -93,8 +142,8 @@ export function DraggableCard({
       translateX.value = event.translationX;
       translateY.value = event.translationY;
 
-      // Update drag position in context
-      runOnJS(updateDrag)({
+      // Detect drop target and update drag state
+      runOnJS(detectDropTarget)({
         x: event.absoluteX,
         y: event.absoluteY,
       });
@@ -126,7 +175,10 @@ export function DraggableCard({
 
   return (
     <GestureDetector gesture={panGesture}>
-      <Animated.View style={[styles.container, animatedStyle]}>
+      <Animated.View
+        onLayout={handleLayout}
+        style={[styles.container, animatedStyle]}
+      >
         <KanbanCard
           card={card}
           isDragging={isDragging}

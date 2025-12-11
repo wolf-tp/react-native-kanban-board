@@ -6,6 +6,7 @@ import React, { createContext, useCallback, useMemo, useState } from 'react';
 import type {
   CardData,
   ColumnConfig,
+  ColumnLayout,
   DragState,
   KanbanBoardProps,
 } from '../types';
@@ -14,6 +15,12 @@ export interface KanbanContextValue<T extends CardData = CardData> {
   // Data
   columns: ColumnConfig[];
   cards: T[];
+
+  // Layout tracking
+  columnLayouts: Map<string, ColumnLayout>;
+  registerColumnLayout: (columnId: string, layout: ColumnLayout) => void;
+  cardLayouts: Map<string, ColumnLayout>;
+  registerCardLayout: (cardId: string, layout: ColumnLayout) => void;
 
   // Drag state
   dragState: DragState;
@@ -99,6 +106,12 @@ export function KanbanProvider<T extends CardData = CardData>({
   cardGap = 12,
 }: KanbanProviderProps<T>) {
   const [dragState, setDragState] = useState<DragState>(initialDragState);
+  const [columnLayouts, setColumnLayouts] = useState<Map<string, ColumnLayout>>(
+    new Map()
+  );
+  const [cardLayouts, setCardLayouts] = useState<Map<string, ColumnLayout>>(
+    new Map()
+  );
 
   const startDrag = useCallback(
     (cardId: string, columnId: string, position: { x: number; y: number }) => {
@@ -190,10 +203,36 @@ export function KanbanProvider<T extends CardData = CardData>({
     [onCardReorder]
   );
 
+  const registerColumnLayout = useCallback(
+    (columnId: string, layout: ColumnLayout) => {
+      setColumnLayouts((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(columnId, layout);
+        return newMap;
+      });
+    },
+    []
+  );
+
+  const registerCardLayout = useCallback(
+    (cardId: string, layout: ColumnLayout) => {
+      setCardLayouts((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(cardId, layout);
+        return newMap;
+      });
+    },
+    []
+  );
+
   const value = useMemo<KanbanContextValue<T>>(
     () => ({
       columns,
       cards,
+      columnLayouts,
+      registerColumnLayout,
+      cardLayouts,
+      registerCardLayout,
       dragState,
       isDragging: dragState.activeCardId !== null,
       startDrag,
@@ -214,6 +253,10 @@ export function KanbanProvider<T extends CardData = CardData>({
     [
       columns,
       cards,
+      columnLayouts,
+      registerColumnLayout,
+      cardLayouts,
+      registerCardLayout,
       dragState,
       startDrag,
       updateDrag,
